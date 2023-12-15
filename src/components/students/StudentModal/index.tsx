@@ -1,10 +1,14 @@
 import '@fortawesome/fontawesome-svg-core/styles.css';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { listClasses } from '@/api/classes/list';
+import { addStudent } from '@/api/students/add';
+import { updateStudent } from '@/api/students/update';
 import { IClass } from '@/models/classes/Class';
-import { ICreateStudent } from '@/models/students/CreateStudent';
+import { IStudent } from '@/models/students/Student';
+import { IStudentWithDetails } from '@/models/students/StudentWithDetails';
+import { toast } from 'react-toastify';
 import {
   BlurOverlay,
   CloseButton,
@@ -23,13 +27,20 @@ import {
 interface IProps {
   $isOpen: boolean;
   $onClose: () => void;
+  title: string;
+  student?: IStudentWithDetails;
 }
 
-const AddStudentModal: React.FC<IProps> = (props) => {
-  const { $isOpen, $onClose } = props;
+const StudentModal: React.FC<IProps> = (props) => {
+  const { $isOpen, $onClose, student, title } = props;
   const [classes, setClasses] = useState<IClass[]>([]);
   const [hasClasses, setHasClasses] = useState<boolean>(false);
-  const [formData, setFormData] = useState<ICreateStudent>({
+  const [selectedClassId, setSelectedClassId] = useState<string | undefined>(
+    undefined
+  );
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [currentStudent, setCurrentStudent] = useState<IStudentWithDetails>();
+  const [formData, setFormData] = useState<IStudent>({
     name: '',
     studentNumber: '',
     birthDate: '',
@@ -38,6 +49,19 @@ const AddStudentModal: React.FC<IProps> = (props) => {
     phone: '',
     classId: 0,
   });
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const studentNumberInputRef = useRef<HTMLInputElement>(null);
+  const birthDateInputRef = useRef<HTMLInputElement>(null);
+  const genderInputRef = useRef<HTMLSelectElement>(null);
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const phoneInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (student) {
+      setIsEdit(true);
+      setCurrentStudent(student);
+    }
+  }, [student]);
 
   useEffect(() => {
     const getClasses = async () => {
@@ -61,6 +85,34 @@ const AddStudentModal: React.FC<IProps> = (props) => {
     getClasses();
   }, []);
 
+  useEffect(() => {
+    if (nameInputRef.current) {
+      nameInputRef.current.value = currentStudent?.name || '';
+    }
+    if (studentNumberInputRef.current) {
+      studentNumberInputRef.current.value = currentStudent?.studentNumber || '';
+    }
+    if (birthDateInputRef.current) {
+      birthDateInputRef.current.value = currentStudent?.birthDate
+        ? getFormatBirthDateToISODate(currentStudent?.birthDate)
+        : '';
+    }
+    if (genderInputRef.current) {
+      if (currentStudent?.gender != undefined) {
+        genderInputRef.current.value = currentStudent?.gender || '';
+      }
+    }
+    if (emailInputRef.current) {
+      emailInputRef.current.value = currentStudent?.email || '';
+    }
+    if (phoneInputRef.current) {
+      phoneInputRef.current.value = currentStudent?.phone || '';
+    }
+    if (currentStudent?.classId != undefined) {
+      setSelectedClassId(currentStudent.classId.toString());
+    }
+  }, [currentStudent]);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -75,11 +127,20 @@ const AddStudentModal: React.FC<IProps> = (props) => {
   const getFormattedBirthDate = (birthDate: string) => {
     const date = new Date(birthDate);
 
+    date.setDate(date.getDate() + 1);
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear();
 
     return `${day}/${month}/${year}`;
+  };
+
+  const getFormatBirthDateToISODate = (birthDate: string) => {
+    const parts = birthDate.split('/');
+
+    const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+
+    return formattedDate;
   };
 
   const handleBirthDateInputChange = (
@@ -111,10 +172,10 @@ const AddStudentModal: React.FC<IProps> = (props) => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formDataSubmit = new FormData(e.currentTarget);
-    const formValues: ICreateStudent = {
+    const formValues: IStudent = {
       name: '',
       studentNumber: '',
       birthDate: '',
@@ -144,9 +205,67 @@ const AddStudentModal: React.FC<IProps> = (props) => {
       }
     });
 
-    console.log(formValues);
-
     setFormData(formValues);
+    const studentTransformed: IStudent = {
+      name: formValues.name,
+      studentNumber: formValues.studentNumber,
+      birthDate: formValues.birthDate,
+      gender: formValues.gender,
+      email: formValues.email,
+      phone: formValues.phone,
+      classId: formValues.classId,
+    };
+    if (isEdit) {
+      try {
+        if (student != undefined && student.id != undefined) {
+          const data = await updateStudent(student.id, studentTransformed);
+          if (data.student != null) {
+            toast.success('Aluno atualizado com sucesso!', {
+              position: 'top-right',
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: 'light',
+            });
+          } else {
+            toast.warning('Nenhuma mudança detectada!', {
+              position: 'top-right',
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: 'light',
+            });
+          }
+        }
+      } catch (error: any) {
+        console.error('Erro na requisição:', error.message);
+      }
+    } else {
+      try {
+        const data = await addStudent(studentTransformed);
+        if (data.student != null) {
+          toast.success('Aluno criado com sucesso!', {
+            position: 'top-right',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'light',
+          });
+        }
+      } catch (error: any) {
+        console.error('Erro na requisição:', error.message);
+      }
+    }
+    $onClose();
   };
 
   return (
@@ -155,11 +274,12 @@ const AddStudentModal: React.FC<IProps> = (props) => {
       {$isOpen && <BlurOverlay />}
       <ModalContainer $isOpen={$isOpen}>
         <CloseButton onClick={$onClose}>X</CloseButton>
-        <ModalTitle>Adicionar aluno(a)</ModalTitle>
+        <ModalTitle>{title}</ModalTitle>
         <Form onSubmit={handleSubmit}>
           <FormLineDiv>
             <FormLabel>Nome</FormLabel>
             <FormInput
+              ref={nameInputRef}
               type="text"
               name="name"
               placeholder="Digite seu nome"
@@ -170,6 +290,7 @@ const AddStudentModal: React.FC<IProps> = (props) => {
           <FormLineDiv>
             <FormLabel>Número de estudante</FormLabel>
             <FormInput
+              ref={studentNumberInputRef}
               type="text"
               name="studentNumber"
               placeholder="Digite seu nro de estudante"
@@ -180,6 +301,7 @@ const AddStudentModal: React.FC<IProps> = (props) => {
           <FormLineDiv>
             <FormLabel>Data de nascimento</FormLabel>
             <FormInput
+              ref={birthDateInputRef}
               type="date"
               name="birthDate"
               onBlur={handleBirthDateInputChange}
@@ -188,7 +310,12 @@ const AddStudentModal: React.FC<IProps> = (props) => {
           </FormLineDiv>
           <FormLineDiv>
             <FormLabel>Sexo</FormLabel>
-            <FormSelect name="gender" onChange={handleSelectGenderChange}>
+            <FormSelect
+              ref={genderInputRef}
+              name="gender"
+              onChange={handleSelectGenderChange}
+              defaultValue="feminine"
+            >
               <SelectOption key="feminine" value="feminine">
                 Feminino
               </SelectOption>
@@ -206,6 +333,7 @@ const AddStudentModal: React.FC<IProps> = (props) => {
           <FormLineDiv>
             <FormLabel>Email</FormLabel>
             <FormInput
+              ref={emailInputRef}
               type="email"
               name="email"
               onBlur={handleInputChange}
@@ -215,6 +343,7 @@ const AddStudentModal: React.FC<IProps> = (props) => {
           <FormLineDiv>
             <FormLabel>Telefone</FormLabel>
             <FormInput
+              ref={phoneInputRef}
               type="number"
               name="phone"
               onBlur={handleInputChange}
@@ -226,9 +355,13 @@ const AddStudentModal: React.FC<IProps> = (props) => {
             {!hasClasses ? (
               <p>Ainda não há classes cadastradas</p>
             ) : (
-              <FormSelect name="classId" onChange={handleSelectClassChange}>
+              <FormSelect
+                value={selectedClassId}
+                name="classId"
+                onChange={handleSelectClassChange}
+              >
                 {classes.map((c) => (
-                  <SelectOption key={c.id} value={c.id}>
+                  <SelectOption key={c.id.toString()} value={c.id.toString()}>
                     {c.name}
                   </SelectOption>
                 ))}
@@ -238,7 +371,7 @@ const AddStudentModal: React.FC<IProps> = (props) => {
 
           <FormInputSubmit
             type="submit"
-            value="Adicionar"
+            value="Salvar"
             disabled={!hasClasses}
           />
         </Form>
@@ -247,4 +380,4 @@ const AddStudentModal: React.FC<IProps> = (props) => {
   );
 };
 
-export default AddStudentModal;
+export default StudentModal;

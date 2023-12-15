@@ -1,8 +1,8 @@
 import { listStudents } from '@/api/students/list';
 import Header from '@/components/Header';
-import AddStudentModal from '@/components/students/AddStudentModal';
 import BasicStudent from '@/components/students/BasicStudent';
-import { IStudent } from '@/models/students/Student';
+import StudentModal from '@/components/students/StudentModal';
+import { IStudentWithDetails } from '@/models/students/StudentWithDetails';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -14,12 +14,8 @@ import {
   TitleContent,
 } from './styles';
 
-function getRandomNumber() {
-  return Math.floor(Math.random() * 100);
-}
-
 const Students: React.FC = () => {
-  const [students, setStudents] = useState<IStudent[]>([]);
+  const [students, setStudents] = useState<IStudentWithDetails[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const openAddModal = () => {
@@ -38,7 +34,6 @@ const Students: React.FC = () => {
       const data = await listStudents();
 
       if (data.students != null && Array.isArray(data.students)) {
-        console.log('true');
         setStudents(data.students);
       } else {
         console.error(
@@ -75,7 +70,11 @@ const Students: React.FC = () => {
         ))}{' '}
       </StudentsDiv>
       {isAddModalOpen && (
-        <AddStudentModal $isOpen={isAddModalOpen} $onClose={closeAddModal} />
+        <StudentModal
+          $isOpen={isAddModalOpen}
+          $onClose={closeAddModal}
+          title="Adicionar aluno(a)"
+        />
       )}
     </PrincipalDiv>
   );

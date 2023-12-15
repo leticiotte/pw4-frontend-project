@@ -1,5 +1,5 @@
-import { ISubject } from "@/models/subjects/Subject";
-import { fetchData } from "../../utils/api";
+import { ISubject } from '@/models/subjects/Subject';
+import { fetchData } from '../../utils/api';
 
 export const listStudentSubjects = async (
   studentId: number
@@ -7,5 +7,5 @@ export const listStudentSubjects = async (
   subjects: ISubject[];
 }> => {
   const endpoint = `/students/${studentId}/subjects`;
-  return fetchData(endpoint);
+  return await fetchData(endpoint);
 };

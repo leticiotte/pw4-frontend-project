@@ -7,5 +7,5 @@ export const deleteStudent = async (
   subjects: ISubject[];
 }> => {
   const endpoint = `/students/${studentId}`;
-  return deleteData(endpoint);
+  return await deleteData(endpoint);
 };

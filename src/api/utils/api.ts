@@ -42,13 +42,31 @@ export const postData = async (
   options?: AxiosRequestConfig
 ) => {
   try {
-    await instance.post(endpoint, body, options);
+    const response = await instance.post(endpoint, body, options);
+    return response.data;
   } catch (error: any) {
     if (error.response) {
       console.error('Erro na resposta da API:', error.response.data);
       throw error;
     }
-    console.log(error);
+    throw new Error(`Erro na requisição: ${error}`);
+  }
+};
+
+export const updateData = async (
+  endpoint: string,
+  body: any,
+  options?: AxiosRequestConfig
+) => {
+  try {
+    const response = await instance.put(endpoint, body, options);
+
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      console.error('Erro na resposta da API:', error.response.data);
+      throw error;
+    }
     throw new Error(`Erro na requisição: ${error}`);
   }
 };

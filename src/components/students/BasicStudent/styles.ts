@@ -25,7 +25,22 @@ export const DetailButton = styled.button`
 
   &:hover {
     color: #1d1e18;
-    background-color: #a68a64;
+    background-color: #936639;
+  }
+`;
+
+export const EditButton = styled.button`
+  font-size: 1em;
+  margin: 1em;
+  color: white;
+  padding: 0.25em 1em;
+  border: 2px solid #333d29;
+  border-radius: 3px;
+  background-color: #414833;
+
+  &:hover {
+    color: #1d1e18;
+    background-color: #656d4a;
   }
 `;
 
@@ -34,12 +49,12 @@ export const DeleteButton = styled.button`
   margin: 1em;
   color: white;
   padding: 0.25em 1em;
-  border: 2px solid #582f0e;
+  border: 2px solid #641220;
   border-radius: 3px;
-  background-color: #7f4f24;
+  background-color: #85182a;
 
   &:hover {
     color: #1d1e18;
-    background-color: #a68a64;
+    background-color: #b35454;
   }
 `;

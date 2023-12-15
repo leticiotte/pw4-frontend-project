@@ -2,7 +2,7 @@ import { addStudentSubject } from '@/api/students/subjects/add';
 import { deleteStudentSubject } from '@/api/students/subjects/delete';
 import { listStudentSubjects } from '@/api/students/subjects/list';
 import { listSubjects } from '@/api/subjects/list';
-import { IStudent } from '@/models/students/Student';
+import { IStudentWithDetails } from '@/models/students/StudentWithDetails';
 import { ISubject } from '@/models/subjects/Subject';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -26,7 +26,7 @@ import {
 interface IProps {
   $isOpen: boolean;
   $onClose: () => void;
-  $student: IStudent;
+  $student: IStudentWithDetails;
 }
 
 interface IDeleteSubject {
@@ -71,7 +71,6 @@ const DetailStudentModal: React.FC<IProps> = (props) => {
         const data = await listSubjects();
 
         if (data.subjects != null && Array.isArray(data.subjects)) {
-          console.log(data.subjects);
           setSubjects(data.subjects);
           setSubjectsLength(data.subjects.length);
         } else {

@@ -1,5 +1,5 @@
-import { ISubject } from "@/models/subjects/Subject";
-import { deleteData } from "../../utils/api";
+import { ISubject } from '@/models/subjects/Subject';
+import { deleteData } from '../../utils/api';
 
 export const deleteStudentSubject = async (
   studentId: number,
@@ -8,5 +8,5 @@ export const deleteStudentSubject = async (
   subjects: ISubject[];
 }> => {
   const endpoint = `/students/${studentId}/subjects/${subjectId}`;
-  return deleteData(endpoint);
+  return await deleteData(endpoint);
 };

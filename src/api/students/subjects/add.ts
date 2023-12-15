@@ -1,4 +1,4 @@
-import { postData } from "../../utils/api";
+import { postData } from '../../utils/api';
 
 interface IBody {
   subjectId: number;
@@ -10,5 +10,5 @@ export const addStudentSubject = async (
 ): Promise<void> => {
   const body: IBody = { subjectId: subjectId };
   const endpoint = `/students/${studentId}/subjects`;
-  postData(endpoint, body);
+  await postData(endpoint, body);
 };

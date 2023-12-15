@@ -1,16 +1,23 @@
-import { IStudent } from '@/models/students/Student';
+import { IStudentWithDetails } from '@/models/students/StudentWithDetails';
 import Image from 'next/image';
 import React, { useState } from 'react';
 
 import DetailStudentModal from '../DetailStudentModal';
-import { DeleteButton, DetailButton, StudentDiv, StudentName } from './styles';
+import {
+  DeleteButton,
+  DetailButton,
+  EditButton,
+  StudentDiv,
+  StudentName,
+} from './styles';
 
 import { deleteStudent } from '@/api/students/delete';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import StudentModal from '../StudentModal';
 
 interface IProps {
-  student: IStudent;
+  student: IStudentWithDetails;
   imageId: number;
   $getStudents: () => void;
 }
@@ -28,13 +35,27 @@ const imageStyle = {
 const BasicStudent: React.FC<IProps> = (props) => {
   const { imageId, student, $getStudents } = props;
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const openDetailModal = () => {
+    document.body.style.overflow = 'hidden';
     setIsDetailModalOpen(true);
   };
 
   const closeDetailModal = () => {
+    document.body.style.overflow = 'auto';
     setIsDetailModalOpen(false);
+  };
+
+  const openEditModal = () => {
+    document.body.style.overflow = 'hidden';
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    document.body.style.overflow = 'auto';
+    setIsEditModalOpen(false);
+    $getStudents();
   };
 
   const handleDelete = async (data: IDeleteStudent) => {
@@ -112,6 +133,7 @@ const BasicStudent: React.FC<IProps> = (props) => {
       />
       <StudentName>{student.name}</StudentName>
       <DetailButton onClick={openDetailModal}>Detalhes</DetailButton>
+      <EditButton onClick={openEditModal}>Editar</EditButton>
       <DeleteButton
         onClick={() =>
           handleDelete({
@@ -128,6 +150,15 @@ const BasicStudent: React.FC<IProps> = (props) => {
           $isOpen={isDetailModalOpen}
           $onClose={closeDetailModal}
           $student={student}
+        />
+      )}
+
+      {isEditModalOpen && (
+        <StudentModal
+          $isOpen={isEditModalOpen}
+          $onClose={closeEditModal}
+          student={student}
+          title="Editar aluno(a)"
         />
       )}
     </StudentDiv>

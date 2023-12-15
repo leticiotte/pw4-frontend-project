@@ -1,7 +1,9 @@
-import { IStudent } from '@/models/students/Student';
+import { IStudentWithDetails } from '@/models/students/StudentWithDetails';
 import { fetchData } from '../utils/api';
 
-export const listStudents = async (): Promise<{ students: IStudent[] }> => {
-    const endpoint = '/students';
-    return fetchData(endpoint);
+export const listStudents = async (): Promise<{
+  students: IStudentWithDetails[];
+}> => {
+  const endpoint = '/students';
+  return await fetchData(endpoint);
 };
