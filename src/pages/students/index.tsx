@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   AddButton,
+  H2,
   PrincipalDiv,
   StudentsDiv,
   Title,
@@ -59,16 +60,21 @@ const Students: React.FC = () => {
           <FontAwesomeIcon icon={faPlus} />
         </AddButton>
       </TitleContent>
-      <StudentsDiv>
-        {students.map((student, index) => (
-          <BasicStudent
-            key={student.id}
-            student={student}
-            imageId={index < 100 ? index : 0}
-            $getStudents={getStudents}
-          />
-        ))}{' '}
-      </StudentsDiv>
+      {students.length > 0 ? (
+        <StudentsDiv>
+          {students.map((student, index) => (
+            <BasicStudent
+              key={student.id}
+              student={student}
+              imageId={index < 100 ? index : 0}
+              $getStudents={getStudents}
+            />
+          ))}{' '}
+        </StudentsDiv>
+      ) : (
+        <H2>Nenhum aluno(a) cadastrado.</H2>
+      )}
+
       {isAddModalOpen && (
         <StudentModal
           $isOpen={isAddModalOpen}
