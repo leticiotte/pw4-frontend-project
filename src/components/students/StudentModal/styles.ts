@@ -34,8 +34,9 @@ export const ModalContainer = styled.div<{ $isOpen: boolean }>`
   border-radius: 0.375rem;
   width: 60%;
   max-width: 600px;
-  height: 70vh;
-  overflow-y: auto;
+  height: fit-content;
+  max-height: 100vh;
+  overflow: auto;
   box-sizing: border-box;
 `;
 
