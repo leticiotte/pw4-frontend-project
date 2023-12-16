@@ -6,9 +6,9 @@ import { listClasses } from '@/api/classes/list';
 import { addStudent } from '@/api/students/add';
 import { updateStudent } from '@/api/students/update';
 import { IClass } from '@/models/classes/Class';
-import { IStudent } from '@/models/students/Student';
 import { IStudentWithDetails } from '@/models/students/StudentWithDetails';
-import { toast } from 'react-toastify';
+import { IStudentWithoutId } from '@/models/students/StudentWithoutId';
+import { successToast, warningToast } from '@/utils/toastUtils';
 import {
   BlurOverlay,
   CloseButton,
@@ -40,7 +40,7 @@ const StudentModal: React.FC<IProps> = (props) => {
   );
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [currentStudent, setCurrentStudent] = useState<IStudentWithDetails>();
-  const [formData, setFormData] = useState<IStudent>({
+  const [formData, setFormData] = useState<IStudentWithoutId>({
     name: '',
     studentNumber: '',
     birthDate: '',
@@ -175,7 +175,7 @@ const StudentModal: React.FC<IProps> = (props) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formDataSubmit = new FormData(e.currentTarget);
-    const formValues: IStudent = {
+    const formValues: IStudentWithoutId = {
       name: '',
       studentNumber: '',
       birthDate: '',
@@ -206,7 +206,7 @@ const StudentModal: React.FC<IProps> = (props) => {
     });
 
     setFormData(formValues);
-    const studentTransformed: IStudent = {
+    const studentTransformed: IStudentWithoutId = {
       name: formValues.name,
       studentNumber: formValues.studentNumber,
       birthDate: formValues.birthDate,
@@ -220,27 +220,9 @@ const StudentModal: React.FC<IProps> = (props) => {
         if (student != undefined && student.id != undefined) {
           const data = await updateStudent(student.id, studentTransformed);
           if (data.student != null) {
-            toast.success('Aluno atualizado com sucesso!', {
-              position: 'top-right',
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: 'light',
-            });
+            successToast('Aluno atualizado com sucesso!');
           } else {
-            toast.warning('Nenhuma mudança detectada!', {
-              position: 'top-right',
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: 'light',
-            });
+            warningToast('Nenhuma mudança detectada!');
           }
         }
       } catch (error: any) {
@@ -250,16 +232,7 @@ const StudentModal: React.FC<IProps> = (props) => {
       try {
         const data = await addStudent(studentTransformed);
         if (data.student != null) {
-          toast.success('Aluno criado com sucesso!', {
-            position: 'top-right',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: 'light',
-          });
+          successToast('Aluno criado com sucesso!');
         }
       } catch (error: any) {
         console.error('Erro na requisição:', error.message);

@@ -4,12 +4,12 @@ import { listStudentSubjects } from '@/api/students/subjects/list';
 import { listSubjects } from '@/api/subjects/list';
 import { IStudentWithDetails } from '@/models/students/StudentWithDetails';
 import { ISubject } from '@/models/subjects/Subject';
+import { errorToast, successToast } from '@/utils/toastUtils';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
 import React, { useCallback, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   AddSubjectButton,
@@ -117,16 +117,7 @@ const DetailStudentModal: React.FC<IProps> = (props) => {
 
     if (isConfirmed) {
       await deleteSubject(data);
-      toast.success('Matrícula cancelada com sucesso', {
-        position: 'top-right',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'light',
-      });
+      successToast('Matrícula cancelada com sucesso');
     }
   };
 
@@ -136,21 +127,13 @@ const DetailStudentModal: React.FC<IProps> = (props) => {
       getStudentSubjects();
     } catch (error: any) {
       console.error('Erro ao excluir o item:', error.message);
+      errorToast('Erro ao excluir matéria do aluno');
     }
   };
 
   const handleAdd = async (data: IAddSubject) => {
     await addSubject(data);
-    toast.success('Matrícula realizada com sucesso', {
-      position: 'top-right',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'light',
-    });
+    successToast('Matrícula realizada com sucesso');
   };
 
   const addSubject = async (data: IAddSubject) => {

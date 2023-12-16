@@ -12,7 +12,7 @@ import {
 } from './styles';
 
 import { deleteStudent } from '@/api/students/delete';
-import { toast } from 'react-toastify';
+import { errorToast, successToast } from '@/utils/toastUtils';
 import 'react-toastify/dist/ReactToastify.css';
 import StudentModal from '../StudentModal';
 
@@ -71,44 +71,16 @@ const BasicStudent: React.FC<IProps> = (props) => {
   const callDeleteStudent = async (studentId: number) => {
     try {
       await deleteStudent(studentId);
-      toast.success('Aluno excluído com sucesso', {
-        position: 'top-right',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'light',
-      });
+      successToast('Aluno excluído com sucesso');
       $getStudents();
     } catch (error: any) {
       if (error.response && error.response.data) {
-        toast.error(
-          `Erro ao excluir aluno: ${error.response.data.error.message}`,
-          {
-            position: 'top-right',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: 'light',
-          }
+        errorToast(
+          `Erro ao excluir aluno: ${error.response.data.error.message}`
         );
         return;
       }
-      toast.error('Erro ao excluir aluno', {
-        position: 'top-right',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'light',
-      });
+      errorToast('Erro ao excluir aluno');
     }
   };
 
