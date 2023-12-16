@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useCallback, useEffect, useState } from 'react';
 import { AddButton, PrincipalDiv, Title, TitleContent } from './styles';
 
-const Students: React.FC = () => {
+const Classes: React.FC = () => {
   const [classes, setClasses] = useState<IClass[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
@@ -65,4 +65,4 @@ const Students: React.FC = () => {
   );
 };
 
-export default Students;
+export default Classes;
