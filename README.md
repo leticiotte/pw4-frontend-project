@@ -41,6 +41,20 @@ Apenas aparece um window.confirm, e após confirmar, um toast aparece de sucesso
 + Tela inicial "Matérias" - Excluir matéria
 Apenas aparece um window.confirm, e após confirmar, um toast aparece de sucesso ou erro.
 
+### Classes
++ Tela inicial "Classes"
+![image](https://github.com/leticiotte/pw4-frontend-project/assets/70478144/f725735c-e1dd-47a5-8c4e-525dd7d7d36d)
+
++ Tela inicial "Classes" - Adicionar classe
+![image](https://github.com/leticiotte/pw4-frontend-project/assets/70478144/f9698af3-eaec-4da6-b761-03027acc5988)
+
++ Tela inicial "Classes" - Editar classe
+![image](https://github.com/leticiotte/pw4-frontend-project/assets/70478144/c7cdcfe1-3f3d-418c-99ac-8a00648d5825)
+
++ Tela inicial "Classes" - Excluir classe
+Apenas aparece um window.confirm, e após confirmar, um toast aparece de sucesso ou erro.
+
+
 <hr />
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
