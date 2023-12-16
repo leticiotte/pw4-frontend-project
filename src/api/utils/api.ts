@@ -42,6 +42,8 @@ export const postData = async (
   options?: AxiosRequestConfig
 ) => {
   try {
+    console.log(endpoint);
+    console.log(body);
     const response = await instance.post(endpoint, body, options);
     return response.data;
   } catch (error: any) {
